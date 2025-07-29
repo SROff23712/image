@@ -1,0 +1,97 @@
+import json
+import os
+
+def generate_html(files):
+    html_start = """
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mods du modpack</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #111; color: #eee; margin: 0; padding: 20px; }
+  h1 { text-align: center; margin-bottom: 20px; }
+  .container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
+  .card {
+    background: #222; border-radius: 8px; padding: 10px; width: 300px;
+    box-shadow: 0 0 8px #00ff00aa; display: flex; flex-direction: column; align-items: center;
+    transition: box-shadow 0.3s;
+  }
+  .card:hover { box-shadow: 0 0 15px #00ff00ff; }
+  .icon {
+    width: 96px; height: 96px; object-fit: contain; margin-bottom: 10px;
+    filter: brightness(0) invert(1);
+  }
+  .title { font-weight: bold; font-size: 1.1em; margin-bottom: 8px; text-align: center; word-break: break-word; }
+  .filesize { font-size: 0.85em; margin-bottom: 8px; color: #aaa; }
+  .download {
+    text-decoration: none; background: #00cc00; color: #111; padding: 8px 15px; border-radius: 4px;
+    font-weight: bold;
+  }
+  .download:hover { background: #00ee00; }
+</style>
+</head>
+<body>
+<h1>Mods du modpack (d'après modrinth.index.json)</h1>
+<div class="container">
+"""
+    html_end = """
+</div>
+</body>
+</html>
+"""
+    # icône générique mod (format SVG data URI ou lien externe)
+    # Ici une icône Minecraft mod de base en lien
+    icon_url = "https://cdn-icons-png.flaticon.com/512/325/325974.png"
+
+    cards_html = ""
+    for file in files:
+        path = file.get("path", "fichier inconnu")
+        downloads = file.get("downloads", [])
+        download_url = downloads[0] if downloads else "#"
+        filesize = file.get("fileSize", 0)
+
+        # Formater la taille en Ko ou Mo
+        if filesize > 1024*1024:
+            size_str = f"{filesize/(1024*1024):.2f} Mo"
+        elif filesize > 1024:
+            size_str = f"{filesize/1024:.1f} Ko"
+        else:
+            size_str = f"{filesize} o"
+
+        card = f"""
+    <div class="card">
+      <img src="{icon_url}" alt="Mod icon" class="icon" />
+      <div class="title">{path}</div>
+      <div class="filesize">Taille : {size_str}</div>
+      <a href="{download_url}" class="download" target="_blank" rel="noopener noreferrer">Télécharger</a>
+    </div>
+"""
+        cards_html += card
+
+    return html_start + cards_html + html_end
+
+def main():
+    json_path = "modrinth.index.json"
+    if not os.path.exists(json_path):
+        print(f"Erreur : fichier {json_path} introuvable.")
+        return
+
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    files = data.get("files")
+    if not files:
+        print("Aucune clé 'files' trouvée dans le JSON.")
+        return
+
+    html = generate_html(files)
+
+    with open("index.html", "w", encoding="utf-8") as f:
+        f.write(html)
+
+    print("Page HTML générée dans index.html")
+
+if __name__ == "__main__":
+    main()
