@@ -1506,19 +1506,18 @@ body {
     .wrapper__6e9f8[data-list-item-id='guildsnav___home'] > .childWrapper__6e9f8 > svg {
         display: none;
     }
-    .wrapper__6e9f8[data-list-item-id='guildsnav___home'] > .childWrapper__6e9f8::before {
-        content: '';
-        display: block;
-        position: absolute;
-        width: 65%;
-        height: 65%;
-        background: var(--dms-icon-color-before);
-        mask-image: var(--dms-icon-svg-url);
-        mask-size: var(--dms-icon-svg-size);
-        mask-position: center;
-        mask-repeat: no-repeat;
-        transition: background-color 0.15s ease-out;
-    }
+.wrapper__6e9f8[data-list-item-id='guildsnav___home'] > .childWrapper__6e9f8::before {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 65%;
+    height: 65%;
+    background-image: url('https://example.com/tongif.gif'); /* URL du GIF */
+    background-size: contain; /* ajuste le GIF à la taille */
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
     .wrapper__6e9f8[data-list-item-id='guildsnav___home']:hover > .childWrapper__6e9f8::before {
         transform: rotate(0deg) scale(1);
     }
